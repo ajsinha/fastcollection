@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright © 2025-2030, All Rights Reserved
+Ashutosh Sinha | Email: ajsinha@gmail.com
+Legal Notice: This module and the associated software architecture are proprietary and confidential.
+Unauthorized copying, distribution, modification, or use is strictly prohibited without explicit
+written permission from the copyright holder.
+Patent Pending: Certain architectural patterns and implementations described in this module may be
+subject to patent applications.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.fastcollection</groupId>
+    <artifactId>fastcollection</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>FastCollection</name>
+    <description>Ultra High-Performance Memory-Mapped Collections Library with JNI and C++ Backend</description>
+    <url>https://github.com/fastcollection/fastcollection</url>
+
+    <developers>
+        <developer>
+            <name>Ashutosh Sinha</name>
+            <email>ajsinha@gmail.com</email>
+        </developer>
+    </developers>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <junit.version>5.10.1</junit.version>
+        <native.lib.output>${project.build.directory}/native</native.lib.output>
+        <cmake.build.type>Release</cmake.build.type>
+    </properties>
+
+    <dependencies>
+        <!-- JUnit 5 for testing -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        
+        <!-- SLF4J for logging -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>2.0.9</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.4.14</version>
+            <scope>runtime</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- Compiler Plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
+                <configuration>
+                    <source>17</source>
+                    <target>17</target>
+                    <compilerArgs>
+                        <arg>-h</arg>
+                        <arg>${project.basedir}/src/main/cpp/include/generated</arg>
+                    </compilerArgs>
+                </configuration>
+            </plugin>
+
+            <!-- Generate JNI Headers -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <!-- Create native output directory -->
+                    <execution>
+                        <id>create-native-dir</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>mkdir</executable>
+                            <arguments>
+                                <argument>-p</argument>
+                                <argument>${native.lib.output}</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    
+                    <!-- CMake Configure -->
+                    <execution>
+                        <id>cmake-configure</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>cmake</executable>
+                            <workingDirectory>${project.basedir}/src/main/cpp</workingDirectory>
+                            <arguments>
+                                <argument>-B</argument>
+                                <argument>${project.build.directory}/cmake-build</argument>
+                                <argument>-DCMAKE_BUILD_TYPE=${cmake.build.type}</argument>
+                                <argument>-DJAVA_HOME=${java.home}</argument>
+                                <argument>-DOUTPUT_DIR=${native.lib.output}</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    
+                    <!-- CMake Build -->
+                    <execution>
+                        <id>cmake-build</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>cmake</executable>
+                            <arguments>
+                                <argument>--build</argument>
+                                <argument>${project.build.directory}/cmake-build</argument>
+                                <argument>--config</argument>
+                                <argument>${cmake.build.type}</argument>
+                                <argument>--parallel</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Include native libraries in JAR -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.3.0</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                        </manifest>
+                        <manifestEntries>
+                            <Implementation-Title>FastCollection</Implementation-Title>
+                            <Implementation-Version>${project.version}</Implementation-Version>
+                            <Implementation-Vendor>Ashutosh Sinha</Implementation-Vendor>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+
+            <!-- Copy native libraries to resources -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.3.1</version>
+                <executions>
+                    <execution>
+                        <id>copy-native-libs</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.outputDirectory}/native</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${native.lib.output}</directory>
+                                    <includes>
+                                        <include>*.so</include>
+                                        <include>*.dylib</include>
+                                        <include>*.dll</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Surefire for tests -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.2</version>
+                <configuration>
+                    <argLine>-Djava.library.path=${native.lib.output}</argLine>
+                </configuration>
+            </plugin>
+
+            <!-- Source JAR -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.3.0</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Javadoc -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.6.2</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <!-- Profile for debug builds -->
+        <profile>
+            <id>debug</id>
+            <properties>
+                <cmake.build.type>Debug</cmake.build.type>
+            </properties>
+        </profile>
+        
+        <!-- Profile for building Python module -->
+        <profile>
+            <id>python</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>3.1.0</version>
+                        <executions>
+                            <execution>
+                                <id>build-python</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>pip</executable>
+                                    <workingDirectory>${project.basedir}/src/main/python</workingDirectory>
+                                    <arguments>
+                                        <argument>install</argument>
+                                        <argument>-e</argument>
+                                        <argument>.</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>
