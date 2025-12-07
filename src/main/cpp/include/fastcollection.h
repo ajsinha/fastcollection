@@ -74,15 +74,8 @@ bool isValidCollectionFile(const std::string& filename);
 
 /**
  * @brief Get statistics about a memory-mapped file
+ * FileStats struct is defined in fc_common.h
  */
-struct FileStats {
-    size_t total_size;
-    size_t used_size;
-    size_t free_size;
-    uint32_t element_count;
-    uint64_t created_at;
-    uint64_t modified_at;
-};
 bool getFileStats(const std::string& filename, FileStats& stats);
 
 } // namespace fastcollection

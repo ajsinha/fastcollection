@@ -15,12 +15,13 @@
 #include <string>
 #include <vector>
 #include <cstdint>
+#include <cstring>
 
 namespace fastcollection {
 namespace jni {
 
 // Exception class name
-constexpr const char* EXCEPTION_CLASS = "com/abhikarta/fastcollection/FastCollectionException";
+constexpr const char* EXCEPTION_CLASS = "com/kuber/fastcollection/FastCollectionException";
 
 /**
  * @brief Throw a Java exception from native code

@@ -14,6 +14,7 @@
  */
 
 #include "fc_common.h"
+#include "fc_serialization.h"
 #include <cstring>
 #include <fstream>
 #include <filesystem>

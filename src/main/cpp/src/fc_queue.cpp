@@ -33,7 +33,7 @@ FastQueue::FastQueue(const std::string& mmap_file,
             );
         }
     } else {
-        header_ = file_manager_->find_or_construct<DequeHeader>("queue_header")();
+        header_ = file_manager_->find_or_construct<DequeHeader>("queue_header");;
     }
     
     stats_.size.store(header_->size.load(), std::memory_order_relaxed);

@@ -32,7 +32,7 @@ FastSet::FastSet(const std::string& mmap_file,
             );
         }
     } else {
-        header_ = file_manager_->find_or_construct<HashTableHeader>("set_header")(bucket_count);
+        header_ = file_manager_->find_or_construct<HashTableHeader>("set_header", bucket_count);
     }
     
     // Find or create buckets

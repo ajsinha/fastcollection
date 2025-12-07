@@ -18,11 +18,11 @@ using namespace fastcollection::jni;
 extern "C" {
 
 /*
- * Class:     com_abhikarta_fastcollection_FastCollectionList
+ * Class:     com_kuber_fastcollection_FastCollectionList
  * Method:    nativeCreate
  * Signature: (Ljava/lang/String;JZ)J
  */
-JNIEXPORT jlong JNICALL Java_com_abhikarta_fastcollection_FastCollectionList_nativeCreate
+JNIEXPORT jlong JNICALL Java_com_kuber_fastcollection_FastCollectionList_nativeCreate
   (JNIEnv* env, jclass clazz, jstring filePath, jlong initialSize, jboolean createNew) {
     try {
         std::string path = jstringToString(env, filePath);
@@ -38,22 +38,22 @@ JNIEXPORT jlong JNICALL Java_com_abhikarta_fastcollection_FastCollectionList_nat
 }
 
 /*
- * Class:     com_abhikarta_fastcollection_FastCollectionList
+ * Class:     com_kuber_fastcollection_FastCollectionList
  * Method:    nativeDestroy
  * Signature: (J)V
  */
-JNIEXPORT void JNICALL Java_com_abhikarta_fastcollection_FastCollectionList_nativeDestroy
+JNIEXPORT void JNICALL Java_com_kuber_fastcollection_FastCollectionList_nativeDestroy
   (JNIEnv* env, jclass clazz, jlong handle) {
     FastList* list = reinterpret_cast<FastList*>(handle);
     delete list;
 }
 
 /*
- * Class:     com_abhikarta_fastcollection_FastCollectionList
+ * Class:     com_kuber_fastcollection_FastCollectionList
  * Method:    nativeAdd
  * Signature: (J[BI)Z
  */
-JNIEXPORT jboolean JNICALL Java_com_abhikarta_fastcollection_FastCollectionList_nativeAdd
+JNIEXPORT jboolean JNICALL Java_com_kuber_fastcollection_FastCollectionList_nativeAdd
   (JNIEnv* env, jobject obj, jlong handle, jbyteArray data, jint ttlSeconds) {
     try {
         FastList* list = reinterpret_cast<FastList*>(handle);
@@ -72,11 +72,11 @@ JNIEXPORT jboolean JNICALL Java_com_abhikarta_fastcollection_FastCollectionList_
 }
 
 /*
- * Class:     com_abhikarta_fastcollection_FastCollectionList
+ * Class:     com_kuber_fastcollection_FastCollectionList
  * Method:    nativeAddAt
  * Signature: (JI[BI)Z
  */
-JNIEXPORT jboolean JNICALL Java_com_abhikarta_fastcollection_FastCollectionList_nativeAddAt
+JNIEXPORT jboolean JNICALL Java_com_kuber_fastcollection_FastCollectionList_nativeAddAt
   (JNIEnv* env, jobject obj, jlong handle, jint index, jbyteArray data, jint ttlSeconds) {
     try {
         FastList* list = reinterpret_cast<FastList*>(handle);
@@ -96,11 +96,11 @@ JNIEXPORT jboolean JNICALL Java_com_abhikarta_fastcollection_FastCollectionList_
 }
 
 /*
- * Class:     com_abhikarta_fastcollection_FastCollectionList
+ * Class:     com_kuber_fastcollection_FastCollectionList
  * Method:    nativeAddFirst
  * Signature: (J[BI)Z
  */
-JNIEXPORT jboolean JNICALL Java_com_abhikarta_fastcollection_FastCollectionList_nativeAddFirst
+JNIEXPORT jboolean JNICALL Java_com_kuber_fastcollection_FastCollectionList_nativeAddFirst
   (JNIEnv* env, jobject obj, jlong handle, jbyteArray data, jint ttlSeconds) {
     try {
         FastList* list = reinterpret_cast<FastList*>(handle);
@@ -119,11 +119,11 @@ JNIEXPORT jboolean JNICALL Java_com_abhikarta_fastcollection_FastCollectionList_
 }
 
 /*
- * Class:     com_abhikarta_fastcollection_FastCollectionList
+ * Class:     com_kuber_fastcollection_FastCollectionList
  * Method:    nativeGet
  * Signature: (JI)[B
  */
-JNIEXPORT jbyteArray JNICALL Java_com_abhikarta_fastcollection_FastCollectionList_nativeGet
+JNIEXPORT jbyteArray JNICALL Java_com_kuber_fastcollection_FastCollectionList_nativeGet
   (JNIEnv* env, jobject obj, jlong handle, jint index) {
     try {
         FastList* list = reinterpret_cast<FastList*>(handle);
@@ -140,11 +140,11 @@ JNIEXPORT jbyteArray JNICALL Java_com_abhikarta_fastcollection_FastCollectionLis
 }
 
 /*
- * Class:     com_abhikarta_fastcollection_FastCollectionList
+ * Class:     com_kuber_fastcollection_FastCollectionList
  * Method:    nativeGetFirst
  * Signature: (J)[B
  */
-JNIEXPORT jbyteArray JNICALL Java_com_abhikarta_fastcollection_FastCollectionList_nativeGetFirst
+JNIEXPORT jbyteArray JNICALL Java_com_kuber_fastcollection_FastCollectionList_nativeGetFirst
   (JNIEnv* env, jobject obj, jlong handle) {
     try {
         FastList* list = reinterpret_cast<FastList*>(handle);
@@ -161,11 +161,11 @@ JNIEXPORT jbyteArray JNICALL Java_com_abhikarta_fastcollection_FastCollectionLis
 }
 
 /*
- * Class:     com_abhikarta_fastcollection_FastCollectionList
+ * Class:     com_kuber_fastcollection_FastCollectionList
  * Method:    nativeGetLast
  * Signature: (J)[B
  */
-JNIEXPORT jbyteArray JNICALL Java_com_abhikarta_fastcollection_FastCollectionList_nativeGetLast
+JNIEXPORT jbyteArray JNICALL Java_com_kuber_fastcollection_FastCollectionList_nativeGetLast
   (JNIEnv* env, jobject obj, jlong handle) {
     try {
         FastList* list = reinterpret_cast<FastList*>(handle);
@@ -182,11 +182,11 @@ JNIEXPORT jbyteArray JNICALL Java_com_abhikarta_fastcollection_FastCollectionLis
 }
 
 /*
- * Class:     com_abhikarta_fastcollection_FastCollectionList
+ * Class:     com_kuber_fastcollection_FastCollectionList
  * Method:    nativeSet
  * Signature: (JI[BI)Z
  */
-JNIEXPORT jboolean JNICALL Java_com_abhikarta_fastcollection_FastCollectionList_nativeSet
+JNIEXPORT jboolean JNICALL Java_com_kuber_fastcollection_FastCollectionList_nativeSet
   (JNIEnv* env, jobject obj, jlong handle, jint index, jbyteArray data, jint ttlSeconds) {
     try {
         FastList* list = reinterpret_cast<FastList*>(handle);
@@ -206,11 +206,11 @@ JNIEXPORT jboolean JNICALL Java_com_abhikarta_fastcollection_FastCollectionList_
 }
 
 /*
- * Class:     com_abhikarta_fastcollection_FastCollectionList
+ * Class:     com_kuber_fastcollection_FastCollectionList
  * Method:    nativeRemove
  * Signature: (JI)[B
  */
-JNIEXPORT jbyteArray JNICALL Java_com_abhikarta_fastcollection_FastCollectionList_nativeRemove
+JNIEXPORT jbyteArray JNICALL Java_com_kuber_fastcollection_FastCollectionList_nativeRemove
   (JNIEnv* env, jobject obj, jlong handle, jint index) {
     try {
         FastList* list = reinterpret_cast<FastList*>(handle);
@@ -227,11 +227,11 @@ JNIEXPORT jbyteArray JNICALL Java_com_abhikarta_fastcollection_FastCollectionLis
 }
 
 /*
- * Class:     com_abhikarta_fastcollection_FastCollectionList
+ * Class:     com_kuber_fastcollection_FastCollectionList
  * Method:    nativeRemoveFirst
  * Signature: (J)[B
  */
-JNIEXPORT jbyteArray JNICALL Java_com_abhikarta_fastcollection_FastCollectionList_nativeRemoveFirst
+JNIEXPORT jbyteArray JNICALL Java_com_kuber_fastcollection_FastCollectionList_nativeRemoveFirst
   (JNIEnv* env, jobject obj, jlong handle) {
     try {
         FastList* list = reinterpret_cast<FastList*>(handle);
@@ -248,11 +248,11 @@ JNIEXPORT jbyteArray JNICALL Java_com_abhikarta_fastcollection_FastCollectionLis
 }
 
 /*
- * Class:     com_abhikarta_fastcollection_FastCollectionList
+ * Class:     com_kuber_fastcollection_FastCollectionList
  * Method:    nativeRemoveLast
  * Signature: (J)[B
  */
-JNIEXPORT jbyteArray JNICALL Java_com_abhikarta_fastcollection_FastCollectionList_nativeRemoveLast
+JNIEXPORT jbyteArray JNICALL Java_com_kuber_fastcollection_FastCollectionList_nativeRemoveLast
   (JNIEnv* env, jobject obj, jlong handle) {
     try {
         FastList* list = reinterpret_cast<FastList*>(handle);
@@ -269,11 +269,11 @@ JNIEXPORT jbyteArray JNICALL Java_com_abhikarta_fastcollection_FastCollectionLis
 }
 
 /*
- * Class:     com_abhikarta_fastcollection_FastCollectionList
+ * Class:     com_kuber_fastcollection_FastCollectionList
  * Method:    nativeContains
  * Signature: (J[B)Z
  */
-JNIEXPORT jboolean JNICALL Java_com_abhikarta_fastcollection_FastCollectionList_nativeContains
+JNIEXPORT jboolean JNICALL Java_com_kuber_fastcollection_FastCollectionList_nativeContains
   (JNIEnv* env, jobject obj, jlong handle, jbyteArray data) {
     try {
         FastList* list = reinterpret_cast<FastList*>(handle);
@@ -289,11 +289,11 @@ JNIEXPORT jboolean JNICALL Java_com_abhikarta_fastcollection_FastCollectionList_
 }
 
 /*
- * Class:     com_abhikarta_fastcollection_FastCollectionList
+ * Class:     com_kuber_fastcollection_FastCollectionList
  * Method:    nativeIndexOf
  * Signature: (J[B)I
  */
-JNIEXPORT jint JNICALL Java_com_abhikarta_fastcollection_FastCollectionList_nativeIndexOf
+JNIEXPORT jint JNICALL Java_com_kuber_fastcollection_FastCollectionList_nativeIndexOf
   (JNIEnv* env, jobject obj, jlong handle, jbyteArray data) {
     try {
         FastList* list = reinterpret_cast<FastList*>(handle);
@@ -309,11 +309,11 @@ JNIEXPORT jint JNICALL Java_com_abhikarta_fastcollection_FastCollectionList_nati
 }
 
 /*
- * Class:     com_abhikarta_fastcollection_FastCollectionList
+ * Class:     com_kuber_fastcollection_FastCollectionList
  * Method:    nativeGetTTL
  * Signature: (JI)J
  */
-JNIEXPORT jlong JNICALL Java_com_abhikarta_fastcollection_FastCollectionList_nativeGetTTL
+JNIEXPORT jlong JNICALL Java_com_kuber_fastcollection_FastCollectionList_nativeGetTTL
   (JNIEnv* env, jobject obj, jlong handle, jint index) {
     try {
         FastList* list = reinterpret_cast<FastList*>(handle);
@@ -325,11 +325,11 @@ JNIEXPORT jlong JNICALL Java_com_abhikarta_fastcollection_FastCollectionList_nat
 }
 
 /*
- * Class:     com_abhikarta_fastcollection_FastCollectionList
+ * Class:     com_kuber_fastcollection_FastCollectionList
  * Method:    nativeSetTTL
  * Signature: (JII)Z
  */
-JNIEXPORT jboolean JNICALL Java_com_abhikarta_fastcollection_FastCollectionList_nativeSetTTL
+JNIEXPORT jboolean JNICALL Java_com_kuber_fastcollection_FastCollectionList_nativeSetTTL
   (JNIEnv* env, jobject obj, jlong handle, jint index, jint ttlSeconds) {
     try {
         FastList* list = reinterpret_cast<FastList*>(handle);
@@ -341,11 +341,11 @@ JNIEXPORT jboolean JNICALL Java_com_abhikarta_fastcollection_FastCollectionList_
 }
 
 /*
- * Class:     com_abhikarta_fastcollection_FastCollectionList
+ * Class:     com_kuber_fastcollection_FastCollectionList
  * Method:    nativeRemoveExpired
  * Signature: (J)I
  */
-JNIEXPORT jint JNICALL Java_com_abhikarta_fastcollection_FastCollectionList_nativeRemoveExpired
+JNIEXPORT jint JNICALL Java_com_kuber_fastcollection_FastCollectionList_nativeRemoveExpired
   (JNIEnv* env, jobject obj, jlong handle) {
     try {
         FastList* list = reinterpret_cast<FastList*>(handle);
@@ -357,11 +357,11 @@ JNIEXPORT jint JNICALL Java_com_abhikarta_fastcollection_FastCollectionList_nati
 }
 
 /*
- * Class:     com_abhikarta_fastcollection_FastCollectionList
+ * Class:     com_kuber_fastcollection_FastCollectionList
  * Method:    nativeClear
  * Signature: (J)V
  */
-JNIEXPORT void JNICALL Java_com_abhikarta_fastcollection_FastCollectionList_nativeClear
+JNIEXPORT void JNICALL Java_com_kuber_fastcollection_FastCollectionList_nativeClear
   (JNIEnv* env, jobject obj, jlong handle) {
     try {
         FastList* list = reinterpret_cast<FastList*>(handle);
@@ -372,11 +372,11 @@ JNIEXPORT void JNICALL Java_com_abhikarta_fastcollection_FastCollectionList_nati
 }
 
 /*
- * Class:     com_abhikarta_fastcollection_FastCollectionList
+ * Class:     com_kuber_fastcollection_FastCollectionList
  * Method:    nativeSize
  * Signature: (J)I
  */
-JNIEXPORT jint JNICALL Java_com_abhikarta_fastcollection_FastCollectionList_nativeSize
+JNIEXPORT jint JNICALL Java_com_kuber_fastcollection_FastCollectionList_nativeSize
   (JNIEnv* env, jobject obj, jlong handle) {
     try {
         FastList* list = reinterpret_cast<FastList*>(handle);
@@ -388,11 +388,11 @@ JNIEXPORT jint JNICALL Java_com_abhikarta_fastcollection_FastCollectionList_nati
 }
 
 /*
- * Class:     com_abhikarta_fastcollection_FastCollectionList
+ * Class:     com_kuber_fastcollection_FastCollectionList
  * Method:    nativeIsEmpty
  * Signature: (J)Z
  */
-JNIEXPORT jboolean JNICALL Java_com_abhikarta_fastcollection_FastCollectionList_nativeIsEmpty
+JNIEXPORT jboolean JNICALL Java_com_kuber_fastcollection_FastCollectionList_nativeIsEmpty
   (JNIEnv* env, jobject obj, jlong handle) {
     try {
         FastList* list = reinterpret_cast<FastList*>(handle);
@@ -404,11 +404,11 @@ JNIEXPORT jboolean JNICALL Java_com_abhikarta_fastcollection_FastCollectionList_
 }
 
 /*
- * Class:     com_abhikarta_fastcollection_FastCollectionList
+ * Class:     com_kuber_fastcollection_FastCollectionList
  * Method:    nativeFlush
  * Signature: (J)V
  */
-JNIEXPORT void JNICALL Java_com_abhikarta_fastcollection_FastCollectionList_nativeFlush
+JNIEXPORT void JNICALL Java_com_kuber_fastcollection_FastCollectionList_nativeFlush
   (JNIEnv* env, jobject obj, jlong handle) {
     try {
         FastList* list = reinterpret_cast<FastList*>(handle);

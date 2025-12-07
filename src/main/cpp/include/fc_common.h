@@ -44,6 +44,8 @@ constexpr uint32_t FC_VERSION_MAJOR = 1;
 constexpr uint32_t FC_VERSION_MINOR = 0;
 constexpr uint32_t FC_VERSION_PATCH = 0;
 
+#define FASTCOLLECTION_VERSION_STRING "1.0.0"
+
 // Default configuration
 constexpr size_t DEFAULT_INITIAL_SIZE = 64 * 1024 * 1024;  // 64MB
 constexpr size_t DEFAULT_GROWTH_SIZE = 16 * 1024 * 1024;   // 16MB
@@ -76,6 +78,7 @@ public:
         DESERIALIZATION_FAILED,
         INDEX_OUT_OF_BOUNDS,
         KEY_NOT_FOUND,
+        NOT_FOUND,
         COLLECTION_FULL,
         LOCK_TIMEOUT,
         INVALID_ARGUMENT,
@@ -256,6 +259,14 @@ public:
     }
     
     /**
+     * @brief Construct an array of objects in shared memory
+     */
+    template<typename T>
+    T* construct_array(const char* name, size_t count) {
+        return file_->find_or_construct<T>(name)[count]();
+    }
+    
+    /**
      * @brief Destroy a named object
      */
     template<typename T>
@@ -349,6 +360,26 @@ inline void prefetch_write(void* addr) {
     __builtin_prefetch(addr, 1, 3);
 #endif
 }
+
+/**
+ * @brief Statistics about a collection file
+ */
+struct FileStats {
+    size_t total_size;      // Total file size
+    size_t free_size;       // Free space in file
+    size_t used_size;       // Used space in file
+    uint32_t element_count; // Number of elements
+    uint64_t created_at;    // Creation timestamp
+    uint64_t modified_at;   // Last modification timestamp
+};
+
+// Library initialization functions
+void initialize();
+void shutdown();
+const char* version();
+bool deleteCollectionFile(const std::string& filename);
+bool isValidCollectionFile(const std::string& filename);
+bool getFileStats(const std::string& filename, FileStats& stats);
 
 } // namespace fastcollection
 

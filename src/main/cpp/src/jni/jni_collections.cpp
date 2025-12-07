@@ -24,7 +24,7 @@ extern "C" {
 // FastCollectionMap JNI Methods
 // ============================================================================
 
-JNIEXPORT jlong JNICALL Java_com_abhikarta_fastcollection_FastCollectionMap_nativeCreate
+JNIEXPORT jlong JNICALL Java_com_kuber_fastcollection_FastCollectionMap_nativeCreate
   (JNIEnv* env, jclass clazz, jstring filePath, jlong initialSize, jboolean createNew) {
     try {
         std::string path = jstringToString(env, filePath);
@@ -36,12 +36,12 @@ JNIEXPORT jlong JNICALL Java_com_abhikarta_fastcollection_FastCollectionMap_nati
     }
 }
 
-JNIEXPORT void JNICALL Java_com_abhikarta_fastcollection_FastCollectionMap_nativeDestroy
+JNIEXPORT void JNICALL Java_com_kuber_fastcollection_FastCollectionMap_nativeDestroy
   (JNIEnv* env, jclass clazz, jlong handle) {
     delete reinterpret_cast<FastMap*>(handle);
 }
 
-JNIEXPORT jboolean JNICALL Java_com_abhikarta_fastcollection_FastCollectionMap_nativePut
+JNIEXPORT jboolean JNICALL Java_com_kuber_fastcollection_FastCollectionMap_nativePut
   (JNIEnv* env, jobject obj, jlong handle, jbyteArray key, jbyteArray value, jint ttlSeconds) {
     try {
         FastMap* map = reinterpret_cast<FastMap*>(handle);
@@ -58,7 +58,7 @@ JNIEXPORT jboolean JNICALL Java_com_abhikarta_fastcollection_FastCollectionMap_n
     }
 }
 
-JNIEXPORT jboolean JNICALL Java_com_abhikarta_fastcollection_FastCollectionMap_nativePutIfAbsent
+JNIEXPORT jboolean JNICALL Java_com_kuber_fastcollection_FastCollectionMap_nativePutIfAbsent
   (JNIEnv* env, jobject obj, jlong handle, jbyteArray key, jbyteArray value, jint ttlSeconds) {
     try {
         FastMap* map = reinterpret_cast<FastMap*>(handle);
@@ -75,7 +75,7 @@ JNIEXPORT jboolean JNICALL Java_com_abhikarta_fastcollection_FastCollectionMap_n
     }
 }
 
-JNIEXPORT jbyteArray JNICALL Java_com_abhikarta_fastcollection_FastCollectionMap_nativeGet
+JNIEXPORT jbyteArray JNICALL Java_com_kuber_fastcollection_FastCollectionMap_nativeGet
   (JNIEnv* env, jobject obj, jlong handle, jbyteArray key) {
     try {
         FastMap* map = reinterpret_cast<FastMap*>(handle);
@@ -94,7 +94,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_abhikarta_fastcollection_FastCollectionMap
     }
 }
 
-JNIEXPORT jboolean JNICALL Java_com_abhikarta_fastcollection_FastCollectionMap_nativeRemove
+JNIEXPORT jboolean JNICALL Java_com_kuber_fastcollection_FastCollectionMap_nativeRemove
   (JNIEnv* env, jobject obj, jlong handle, jbyteArray key) {
     try {
         FastMap* map = reinterpret_cast<FastMap*>(handle);
@@ -109,7 +109,7 @@ JNIEXPORT jboolean JNICALL Java_com_abhikarta_fastcollection_FastCollectionMap_n
     }
 }
 
-JNIEXPORT jboolean JNICALL Java_com_abhikarta_fastcollection_FastCollectionMap_nativeContainsKey
+JNIEXPORT jboolean JNICALL Java_com_kuber_fastcollection_FastCollectionMap_nativeContainsKey
   (JNIEnv* env, jobject obj, jlong handle, jbyteArray key) {
     try {
         FastMap* map = reinterpret_cast<FastMap*>(handle);
@@ -124,7 +124,7 @@ JNIEXPORT jboolean JNICALL Java_com_abhikarta_fastcollection_FastCollectionMap_n
     }
 }
 
-JNIEXPORT jlong JNICALL Java_com_abhikarta_fastcollection_FastCollectionMap_nativeGetTTL
+JNIEXPORT jlong JNICALL Java_com_kuber_fastcollection_FastCollectionMap_nativeGetTTL
   (JNIEnv* env, jobject obj, jlong handle, jbyteArray key) {
     try {
         FastMap* map = reinterpret_cast<FastMap*>(handle);
@@ -139,7 +139,7 @@ JNIEXPORT jlong JNICALL Java_com_abhikarta_fastcollection_FastCollectionMap_nati
     }
 }
 
-JNIEXPORT jboolean JNICALL Java_com_abhikarta_fastcollection_FastCollectionMap_nativeSetTTL
+JNIEXPORT jboolean JNICALL Java_com_kuber_fastcollection_FastCollectionMap_nativeSetTTL
   (JNIEnv* env, jobject obj, jlong handle, jbyteArray key, jint ttlSeconds) {
     try {
         FastMap* map = reinterpret_cast<FastMap*>(handle);
@@ -154,7 +154,7 @@ JNIEXPORT jboolean JNICALL Java_com_abhikarta_fastcollection_FastCollectionMap_n
     }
 }
 
-JNIEXPORT jint JNICALL Java_com_abhikarta_fastcollection_FastCollectionMap_nativeRemoveExpired
+JNIEXPORT jint JNICALL Java_com_kuber_fastcollection_FastCollectionMap_nativeRemoveExpired
   (JNIEnv* env, jobject obj, jlong handle) {
     try {
         FastMap* map = reinterpret_cast<FastMap*>(handle);
@@ -165,25 +165,25 @@ JNIEXPORT jint JNICALL Java_com_abhikarta_fastcollection_FastCollectionMap_nativ
     }
 }
 
-JNIEXPORT void JNICALL Java_com_abhikarta_fastcollection_FastCollectionMap_nativeClear
+JNIEXPORT void JNICALL Java_com_kuber_fastcollection_FastCollectionMap_nativeClear
   (JNIEnv* env, jobject obj, jlong handle) {
     try { reinterpret_cast<FastMap*>(handle)->clear(); }
     catch (const std::exception& e) { throwException(env, e.what()); }
 }
 
-JNIEXPORT jint JNICALL Java_com_abhikarta_fastcollection_FastCollectionMap_nativeSize
+JNIEXPORT jint JNICALL Java_com_kuber_fastcollection_FastCollectionMap_nativeSize
   (JNIEnv* env, jobject obj, jlong handle) {
     try { return static_cast<jint>(reinterpret_cast<FastMap*>(handle)->size()); }
     catch (const std::exception& e) { throwException(env, e.what()); return 0; }
 }
 
-JNIEXPORT jboolean JNICALL Java_com_abhikarta_fastcollection_FastCollectionMap_nativeIsEmpty
+JNIEXPORT jboolean JNICALL Java_com_kuber_fastcollection_FastCollectionMap_nativeIsEmpty
   (JNIEnv* env, jobject obj, jlong handle) {
     try { return reinterpret_cast<FastMap*>(handle)->isEmpty() ? JNI_TRUE : JNI_FALSE; }
     catch (const std::exception& e) { throwException(env, e.what()); return JNI_TRUE; }
 }
 
-JNIEXPORT void JNICALL Java_com_abhikarta_fastcollection_FastCollectionMap_nativeFlush
+JNIEXPORT void JNICALL Java_com_kuber_fastcollection_FastCollectionMap_nativeFlush
   (JNIEnv* env, jobject obj, jlong handle) {
     try { reinterpret_cast<FastMap*>(handle)->flush(); }
     catch (const std::exception& e) { throwException(env, e.what()); }
@@ -193,7 +193,7 @@ JNIEXPORT void JNICALL Java_com_abhikarta_fastcollection_FastCollectionMap_nativ
 // FastCollectionSet JNI Methods
 // ============================================================================
 
-JNIEXPORT jlong JNICALL Java_com_abhikarta_fastcollection_FastCollectionSet_nativeCreate
+JNIEXPORT jlong JNICALL Java_com_kuber_fastcollection_FastCollectionSet_nativeCreate
   (JNIEnv* env, jclass clazz, jstring filePath, jlong initialSize, jboolean createNew) {
     try {
         std::string path = jstringToString(env, filePath);
@@ -205,12 +205,12 @@ JNIEXPORT jlong JNICALL Java_com_abhikarta_fastcollection_FastCollectionSet_nati
     }
 }
 
-JNIEXPORT void JNICALL Java_com_abhikarta_fastcollection_FastCollectionSet_nativeDestroy
+JNIEXPORT void JNICALL Java_com_kuber_fastcollection_FastCollectionSet_nativeDestroy
   (JNIEnv* env, jclass clazz, jlong handle) {
     delete reinterpret_cast<FastSet*>(handle);
 }
 
-JNIEXPORT jboolean JNICALL Java_com_abhikarta_fastcollection_FastCollectionSet_nativeAdd
+JNIEXPORT jboolean JNICALL Java_com_kuber_fastcollection_FastCollectionSet_nativeAdd
   (JNIEnv* env, jobject obj, jlong handle, jbyteArray data, jint ttlSeconds) {
     try {
         FastSet* set = reinterpret_cast<FastSet*>(handle);
@@ -225,7 +225,7 @@ JNIEXPORT jboolean JNICALL Java_com_abhikarta_fastcollection_FastCollectionSet_n
     }
 }
 
-JNIEXPORT jboolean JNICALL Java_com_abhikarta_fastcollection_FastCollectionSet_nativeRemove
+JNIEXPORT jboolean JNICALL Java_com_kuber_fastcollection_FastCollectionSet_nativeRemove
   (JNIEnv* env, jobject obj, jlong handle, jbyteArray data) {
     try {
         FastSet* set = reinterpret_cast<FastSet*>(handle);
@@ -240,7 +240,7 @@ JNIEXPORT jboolean JNICALL Java_com_abhikarta_fastcollection_FastCollectionSet_n
     }
 }
 
-JNIEXPORT jboolean JNICALL Java_com_abhikarta_fastcollection_FastCollectionSet_nativeContains
+JNIEXPORT jboolean JNICALL Java_com_kuber_fastcollection_FastCollectionSet_nativeContains
   (JNIEnv* env, jobject obj, jlong handle, jbyteArray data) {
     try {
         FastSet* set = reinterpret_cast<FastSet*>(handle);
@@ -255,7 +255,7 @@ JNIEXPORT jboolean JNICALL Java_com_abhikarta_fastcollection_FastCollectionSet_n
     }
 }
 
-JNIEXPORT jlong JNICALL Java_com_abhikarta_fastcollection_FastCollectionSet_nativeGetTTL
+JNIEXPORT jlong JNICALL Java_com_kuber_fastcollection_FastCollectionSet_nativeGetTTL
   (JNIEnv* env, jobject obj, jlong handle, jbyteArray data) {
     try {
         FastSet* set = reinterpret_cast<FastSet*>(handle);
@@ -270,7 +270,7 @@ JNIEXPORT jlong JNICALL Java_com_abhikarta_fastcollection_FastCollectionSet_nati
     }
 }
 
-JNIEXPORT jboolean JNICALL Java_com_abhikarta_fastcollection_FastCollectionSet_nativeSetTTL
+JNIEXPORT jboolean JNICALL Java_com_kuber_fastcollection_FastCollectionSet_nativeSetTTL
   (JNIEnv* env, jobject obj, jlong handle, jbyteArray data, jint ttlSeconds) {
     try {
         FastSet* set = reinterpret_cast<FastSet*>(handle);
@@ -285,31 +285,31 @@ JNIEXPORT jboolean JNICALL Java_com_abhikarta_fastcollection_FastCollectionSet_n
     }
 }
 
-JNIEXPORT jint JNICALL Java_com_abhikarta_fastcollection_FastCollectionSet_nativeRemoveExpired
+JNIEXPORT jint JNICALL Java_com_kuber_fastcollection_FastCollectionSet_nativeRemoveExpired
   (JNIEnv* env, jobject obj, jlong handle) {
     try { return static_cast<jint>(reinterpret_cast<FastSet*>(handle)->removeExpired()); }
     catch (const std::exception& e) { throwException(env, e.what()); return 0; }
 }
 
-JNIEXPORT void JNICALL Java_com_abhikarta_fastcollection_FastCollectionSet_nativeClear
+JNIEXPORT void JNICALL Java_com_kuber_fastcollection_FastCollectionSet_nativeClear
   (JNIEnv* env, jobject obj, jlong handle) {
     try { reinterpret_cast<FastSet*>(handle)->clear(); }
     catch (const std::exception& e) { throwException(env, e.what()); }
 }
 
-JNIEXPORT jint JNICALL Java_com_abhikarta_fastcollection_FastCollectionSet_nativeSize
+JNIEXPORT jint JNICALL Java_com_kuber_fastcollection_FastCollectionSet_nativeSize
   (JNIEnv* env, jobject obj, jlong handle) {
     try { return static_cast<jint>(reinterpret_cast<FastSet*>(handle)->size()); }
     catch (const std::exception& e) { throwException(env, e.what()); return 0; }
 }
 
-JNIEXPORT jboolean JNICALL Java_com_abhikarta_fastcollection_FastCollectionSet_nativeIsEmpty
+JNIEXPORT jboolean JNICALL Java_com_kuber_fastcollection_FastCollectionSet_nativeIsEmpty
   (JNIEnv* env, jobject obj, jlong handle) {
     try { return reinterpret_cast<FastSet*>(handle)->isEmpty() ? JNI_TRUE : JNI_FALSE; }
     catch (const std::exception& e) { throwException(env, e.what()); return JNI_TRUE; }
 }
 
-JNIEXPORT void JNICALL Java_com_abhikarta_fastcollection_FastCollectionSet_nativeFlush
+JNIEXPORT void JNICALL Java_com_kuber_fastcollection_FastCollectionSet_nativeFlush
   (JNIEnv* env, jobject obj, jlong handle) {
     try { reinterpret_cast<FastSet*>(handle)->flush(); }
     catch (const std::exception& e) { throwException(env, e.what()); }
@@ -319,7 +319,7 @@ JNIEXPORT void JNICALL Java_com_abhikarta_fastcollection_FastCollectionSet_nativ
 // FastCollectionQueue JNI Methods
 // ============================================================================
 
-JNIEXPORT jlong JNICALL Java_com_abhikarta_fastcollection_FastCollectionQueue_nativeCreate
+JNIEXPORT jlong JNICALL Java_com_kuber_fastcollection_FastCollectionQueue_nativeCreate
   (JNIEnv* env, jclass clazz, jstring filePath, jlong initialSize, jboolean createNew) {
     try {
         std::string path = jstringToString(env, filePath);
@@ -331,12 +331,12 @@ JNIEXPORT jlong JNICALL Java_com_abhikarta_fastcollection_FastCollectionQueue_na
     }
 }
 
-JNIEXPORT void JNICALL Java_com_abhikarta_fastcollection_FastCollectionQueue_nativeDestroy
+JNIEXPORT void JNICALL Java_com_kuber_fastcollection_FastCollectionQueue_nativeDestroy
   (JNIEnv* env, jclass clazz, jlong handle) {
     delete reinterpret_cast<FastQueue*>(handle);
 }
 
-JNIEXPORT jboolean JNICALL Java_com_abhikarta_fastcollection_FastCollectionQueue_nativeOffer
+JNIEXPORT jboolean JNICALL Java_com_kuber_fastcollection_FastCollectionQueue_nativeOffer
   (JNIEnv* env, jobject obj, jlong handle, jbyteArray data, jint ttlSeconds) {
     try {
         FastQueue* queue = reinterpret_cast<FastQueue*>(handle);
@@ -351,7 +351,7 @@ JNIEXPORT jboolean JNICALL Java_com_abhikarta_fastcollection_FastCollectionQueue
     }
 }
 
-JNIEXPORT jboolean JNICALL Java_com_abhikarta_fastcollection_FastCollectionQueue_nativeOfferFirst
+JNIEXPORT jboolean JNICALL Java_com_kuber_fastcollection_FastCollectionQueue_nativeOfferFirst
   (JNIEnv* env, jobject obj, jlong handle, jbyteArray data, jint ttlSeconds) {
     try {
         FastQueue* queue = reinterpret_cast<FastQueue*>(handle);
@@ -366,7 +366,7 @@ JNIEXPORT jboolean JNICALL Java_com_abhikarta_fastcollection_FastCollectionQueue
     }
 }
 
-JNIEXPORT jbyteArray JNICALL Java_com_abhikarta_fastcollection_FastCollectionQueue_nativePoll
+JNIEXPORT jbyteArray JNICALL Java_com_kuber_fastcollection_FastCollectionQueue_nativePoll
   (JNIEnv* env, jobject obj, jlong handle) {
     try {
         FastQueue* queue = reinterpret_cast<FastQueue*>(handle);
@@ -382,7 +382,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_abhikarta_fastcollection_FastCollectionQue
     }
 }
 
-JNIEXPORT jbyteArray JNICALL Java_com_abhikarta_fastcollection_FastCollectionQueue_nativePollLast
+JNIEXPORT jbyteArray JNICALL Java_com_kuber_fastcollection_FastCollectionQueue_nativePollLast
   (JNIEnv* env, jobject obj, jlong handle) {
     try {
         FastQueue* queue = reinterpret_cast<FastQueue*>(handle);
@@ -398,7 +398,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_abhikarta_fastcollection_FastCollectionQue
     }
 }
 
-JNIEXPORT jbyteArray JNICALL Java_com_abhikarta_fastcollection_FastCollectionQueue_nativePeek
+JNIEXPORT jbyteArray JNICALL Java_com_kuber_fastcollection_FastCollectionQueue_nativePeek
   (JNIEnv* env, jobject obj, jlong handle) {
     try {
         FastQueue* queue = reinterpret_cast<FastQueue*>(handle);
@@ -414,37 +414,37 @@ JNIEXPORT jbyteArray JNICALL Java_com_abhikarta_fastcollection_FastCollectionQue
     }
 }
 
-JNIEXPORT jlong JNICALL Java_com_abhikarta_fastcollection_FastCollectionQueue_nativePeekTTL
+JNIEXPORT jlong JNICALL Java_com_kuber_fastcollection_FastCollectionQueue_nativePeekTTL
   (JNIEnv* env, jobject obj, jlong handle) {
     try { return static_cast<jlong>(reinterpret_cast<FastQueue*>(handle)->peekTTL()); }
     catch (const std::exception& e) { throwException(env, e.what()); return 0; }
 }
 
-JNIEXPORT jint JNICALL Java_com_abhikarta_fastcollection_FastCollectionQueue_nativeRemoveExpired
+JNIEXPORT jint JNICALL Java_com_kuber_fastcollection_FastCollectionQueue_nativeRemoveExpired
   (JNIEnv* env, jobject obj, jlong handle) {
     try { return static_cast<jint>(reinterpret_cast<FastQueue*>(handle)->removeExpired()); }
     catch (const std::exception& e) { throwException(env, e.what()); return 0; }
 }
 
-JNIEXPORT void JNICALL Java_com_abhikarta_fastcollection_FastCollectionQueue_nativeClear
+JNIEXPORT void JNICALL Java_com_kuber_fastcollection_FastCollectionQueue_nativeClear
   (JNIEnv* env, jobject obj, jlong handle) {
     try { reinterpret_cast<FastQueue*>(handle)->clear(); }
     catch (const std::exception& e) { throwException(env, e.what()); }
 }
 
-JNIEXPORT jint JNICALL Java_com_abhikarta_fastcollection_FastCollectionQueue_nativeSize
+JNIEXPORT jint JNICALL Java_com_kuber_fastcollection_FastCollectionQueue_nativeSize
   (JNIEnv* env, jobject obj, jlong handle) {
     try { return static_cast<jint>(reinterpret_cast<FastQueue*>(handle)->size()); }
     catch (const std::exception& e) { throwException(env, e.what()); return 0; }
 }
 
-JNIEXPORT jboolean JNICALL Java_com_abhikarta_fastcollection_FastCollectionQueue_nativeIsEmpty
+JNIEXPORT jboolean JNICALL Java_com_kuber_fastcollection_FastCollectionQueue_nativeIsEmpty
   (JNIEnv* env, jobject obj, jlong handle) {
     try { return reinterpret_cast<FastQueue*>(handle)->isEmpty() ? JNI_TRUE : JNI_FALSE; }
     catch (const std::exception& e) { throwException(env, e.what()); return JNI_TRUE; }
 }
 
-JNIEXPORT void JNICALL Java_com_abhikarta_fastcollection_FastCollectionQueue_nativeFlush
+JNIEXPORT void JNICALL Java_com_kuber_fastcollection_FastCollectionQueue_nativeFlush
   (JNIEnv* env, jobject obj, jlong handle) {
     try { reinterpret_cast<FastQueue*>(handle)->flush(); }
     catch (const std::exception& e) { throwException(env, e.what()); }
@@ -454,7 +454,7 @@ JNIEXPORT void JNICALL Java_com_abhikarta_fastcollection_FastCollectionQueue_nat
 // FastCollectionStack JNI Methods
 // ============================================================================
 
-JNIEXPORT jlong JNICALL Java_com_abhikarta_fastcollection_FastCollectionStack_nativeCreate
+JNIEXPORT jlong JNICALL Java_com_kuber_fastcollection_FastCollectionStack_nativeCreate
   (JNIEnv* env, jclass clazz, jstring filePath, jlong initialSize, jboolean createNew) {
     try {
         std::string path = jstringToString(env, filePath);
@@ -466,12 +466,12 @@ JNIEXPORT jlong JNICALL Java_com_abhikarta_fastcollection_FastCollectionStack_na
     }
 }
 
-JNIEXPORT void JNICALL Java_com_abhikarta_fastcollection_FastCollectionStack_nativeDestroy
+JNIEXPORT void JNICALL Java_com_kuber_fastcollection_FastCollectionStack_nativeDestroy
   (JNIEnv* env, jclass clazz, jlong handle) {
     delete reinterpret_cast<FastStack*>(handle);
 }
 
-JNIEXPORT jboolean JNICALL Java_com_abhikarta_fastcollection_FastCollectionStack_nativePush
+JNIEXPORT jboolean JNICALL Java_com_kuber_fastcollection_FastCollectionStack_nativePush
   (JNIEnv* env, jobject obj, jlong handle, jbyteArray data, jint ttlSeconds) {
     try {
         FastStack* stack = reinterpret_cast<FastStack*>(handle);
@@ -486,7 +486,7 @@ JNIEXPORT jboolean JNICALL Java_com_abhikarta_fastcollection_FastCollectionStack
     }
 }
 
-JNIEXPORT jbyteArray JNICALL Java_com_abhikarta_fastcollection_FastCollectionStack_nativePop
+JNIEXPORT jbyteArray JNICALL Java_com_kuber_fastcollection_FastCollectionStack_nativePop
   (JNIEnv* env, jobject obj, jlong handle) {
     try {
         FastStack* stack = reinterpret_cast<FastStack*>(handle);
@@ -502,7 +502,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_abhikarta_fastcollection_FastCollectionSta
     }
 }
 
-JNIEXPORT jbyteArray JNICALL Java_com_abhikarta_fastcollection_FastCollectionStack_nativePeek
+JNIEXPORT jbyteArray JNICALL Java_com_kuber_fastcollection_FastCollectionStack_nativePeek
   (JNIEnv* env, jobject obj, jlong handle) {
     try {
         FastStack* stack = reinterpret_cast<FastStack*>(handle);
@@ -518,13 +518,13 @@ JNIEXPORT jbyteArray JNICALL Java_com_abhikarta_fastcollection_FastCollectionSta
     }
 }
 
-JNIEXPORT jlong JNICALL Java_com_abhikarta_fastcollection_FastCollectionStack_nativePeekTTL
+JNIEXPORT jlong JNICALL Java_com_kuber_fastcollection_FastCollectionStack_nativePeekTTL
   (JNIEnv* env, jobject obj, jlong handle) {
     try { return static_cast<jlong>(reinterpret_cast<FastStack*>(handle)->peekTTL()); }
     catch (const std::exception& e) { throwException(env, e.what()); return 0; }
 }
 
-JNIEXPORT jlong JNICALL Java_com_abhikarta_fastcollection_FastCollectionStack_nativeSearch
+JNIEXPORT jlong JNICALL Java_com_kuber_fastcollection_FastCollectionStack_nativeSearch
   (JNIEnv* env, jobject obj, jlong handle, jbyteArray data) {
     try {
         FastStack* stack = reinterpret_cast<FastStack*>(handle);
@@ -539,31 +539,31 @@ JNIEXPORT jlong JNICALL Java_com_abhikarta_fastcollection_FastCollectionStack_na
     }
 }
 
-JNIEXPORT jint JNICALL Java_com_abhikarta_fastcollection_FastCollectionStack_nativeRemoveExpired
+JNIEXPORT jint JNICALL Java_com_kuber_fastcollection_FastCollectionStack_nativeRemoveExpired
   (JNIEnv* env, jobject obj, jlong handle) {
     try { return static_cast<jint>(reinterpret_cast<FastStack*>(handle)->removeExpired()); }
     catch (const std::exception& e) { throwException(env, e.what()); return 0; }
 }
 
-JNIEXPORT void JNICALL Java_com_abhikarta_fastcollection_FastCollectionStack_nativeClear
+JNIEXPORT void JNICALL Java_com_kuber_fastcollection_FastCollectionStack_nativeClear
   (JNIEnv* env, jobject obj, jlong handle) {
     try { reinterpret_cast<FastStack*>(handle)->clear(); }
     catch (const std::exception& e) { throwException(env, e.what()); }
 }
 
-JNIEXPORT jint JNICALL Java_com_abhikarta_fastcollection_FastCollectionStack_nativeSize
+JNIEXPORT jint JNICALL Java_com_kuber_fastcollection_FastCollectionStack_nativeSize
   (JNIEnv* env, jobject obj, jlong handle) {
     try { return static_cast<jint>(reinterpret_cast<FastStack*>(handle)->size()); }
     catch (const std::exception& e) { throwException(env, e.what()); return 0; }
 }
 
-JNIEXPORT jboolean JNICALL Java_com_abhikarta_fastcollection_FastCollectionStack_nativeIsEmpty
+JNIEXPORT jboolean JNICALL Java_com_kuber_fastcollection_FastCollectionStack_nativeIsEmpty
   (JNIEnv* env, jobject obj, jlong handle) {
     try { return reinterpret_cast<FastStack*>(handle)->isEmpty() ? JNI_TRUE : JNI_FALSE; }
     catch (const std::exception& e) { throwException(env, e.what()); return JNI_TRUE; }
 }
 
-JNIEXPORT void JNICALL Java_com_abhikarta_fastcollection_FastCollectionStack_nativeFlush
+JNIEXPORT void JNICALL Java_com_kuber_fastcollection_FastCollectionStack_nativeFlush
   (JNIEnv* env, jobject obj, jlong handle) {
     try { reinterpret_cast<FastStack*>(handle)->flush(); }
     catch (const std::exception& e) { throwException(env, e.what()); }

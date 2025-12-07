@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="maven-antrun-" default="main">
+  <target name="main">
+    <mkdir dir="/home/ashutosh/IdeaProjects/fastcollection/target/native/linux/x64" />
+    <mkdir dir="/home/ashutosh/IdeaProjects/fastcollection/target/cmake-build" />
+    <mkdir dir="/home/ashutosh/IdeaProjects/fastcollection/src/main/cpp/include/generated" />
+    <mkdir dir="/home/ashutosh/IdeaProjects/fastcollection/target/classes/native/linux/x64" />
+    <echo message="Building for platform: linux-x64" />
+  </target>
+</project>

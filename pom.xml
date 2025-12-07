@@ -13,14 +13,14 @@ subject to patent applications.
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.fastcollection</groupId>
+    <groupId>com.kuber</groupId>
     <artifactId>fastcollection</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
 
     <name>FastCollection</name>
     <description>Ultra High-Performance Memory-Mapped Collections Library with JNI and C++ Backend</description>
-    <url>https://github.com/fastcollection/fastcollection</url>
+    <url>https://github.com/abhikarta/fastcollection</url>
 
     <developers>
         <developer>
@@ -34,8 +34,17 @@ subject to patent applications.
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <junit.version>5.10.1</junit.version>
-        <native.lib.output>${project.build.directory}/native</native.lib.output>
         <cmake.build.type>Release</cmake.build.type>
+        
+        <!-- Platform detection - will be set by profiles -->
+        <native.platform>linux</native.platform>
+        <native.arch>x64</native.arch>
+        <native.lib.extension>.so</native.lib.extension>
+        <native.lib.prefix>lib</native.lib.prefix>
+        
+        <!-- Output directories -->
+        <native.lib.output>${project.build.directory}/native/${native.platform}/${native.arch}</native.lib.output>
+        <native.resources.output>${project.build.outputDirectory}/native/${native.platform}/${native.arch}</native.resources.output>
     </properties>
 
     <dependencies>
@@ -69,7 +78,7 @@ subject to patent applications.
 
     <build>
         <plugins>
-            <!-- Compiler Plugin -->
+            <!-- Compiler Plugin with JNI header generation -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -84,28 +93,37 @@ subject to patent applications.
                 </configuration>
             </plugin>
 
-            <!-- Generate JNI Headers -->
+            <!-- Create directories using Ant -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>create-native-dirs</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <mkdir dir="${native.lib.output}"/>
+                                <mkdir dir="${project.build.directory}/cmake-build"/>
+                                <mkdir dir="${project.basedir}/src/main/cpp/include/generated"/>
+                                <mkdir dir="${native.resources.output}"/>
+                                <echo message="Building for platform: ${native.platform}-${native.arch}"/>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Native build with CMake -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.1.0</version>
                 <executions>
-                    <!-- Create native output directory -->
-                    <execution>
-                        <id>create-native-dir</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>mkdir</executable>
-                            <arguments>
-                                <argument>-p</argument>
-                                <argument>${native.lib.output}</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-                    
                     <!-- CMake Configure -->
                     <execution>
                         <id>cmake-configure</id>
@@ -116,13 +134,7 @@ subject to patent applications.
                         <configuration>
                             <executable>cmake</executable>
                             <workingDirectory>${project.basedir}/src/main/cpp</workingDirectory>
-                            <arguments>
-                                <argument>-B</argument>
-                                <argument>${project.build.directory}/cmake-build</argument>
-                                <argument>-DCMAKE_BUILD_TYPE=${cmake.build.type}</argument>
-                                <argument>-DJAVA_HOME=${java.home}</argument>
-                                <argument>-DOUTPUT_DIR=${native.lib.output}</argument>
-                            </arguments>
+                            <commandlineArgs>-B ${project.build.directory}/cmake-build -DCMAKE_BUILD_TYPE=${cmake.build.type} -DJAVA_HOME=${java.home} -DOUTPUT_DIR=${native.lib.output}</commandlineArgs>
                         </configuration>
                     </execution>
                     
@@ -135,19 +147,40 @@ subject to patent applications.
                         </goals>
                         <configuration>
                             <executable>cmake</executable>
-                            <arguments>
-                                <argument>--build</argument>
-                                <argument>${project.build.directory}/cmake-build</argument>
-                                <argument>--config</argument>
-                                <argument>${cmake.build.type}</argument>
-                                <argument>--parallel</argument>
-                            </arguments>
+                            <commandlineArgs>--build ${project.build.directory}/cmake-build --config ${cmake.build.type} --parallel</commandlineArgs>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
 
-            <!-- Include native libraries in JAR -->
+            <!-- Copy native libraries to resources with platform structure -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.3.1</version>
+                <executions>
+                    <execution>
+                        <id>copy-native-libs</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${native.resources.output}</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${native.lib.output}</directory>
+                                    <includes>
+                                        <include>*${native.lib.extension}</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- JAR packaging -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -161,38 +194,11 @@ subject to patent applications.
                             <Implementation-Title>FastCollection</Implementation-Title>
                             <Implementation-Version>${project.version}</Implementation-Version>
                             <Implementation-Vendor>Ashutosh Sinha</Implementation-Vendor>
+                            <Native-Platform>${native.platform}</Native-Platform>
+                            <Native-Architecture>${native.arch}</Native-Architecture>
                         </manifestEntries>
                     </archive>
                 </configuration>
-            </plugin>
-
-            <!-- Copy native libraries to resources -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>3.3.1</version>
-                <executions>
-                    <execution>
-                        <id>copy-native-libs</id>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.outputDirectory}/native</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>${native.lib.output}</directory>
-                                    <includes>
-                                        <include>*.so</include>
-                                        <include>*.dylib</include>
-                                        <include>*.dll</include>
-                                    </includes>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
 
             <!-- Surefire for tests -->
@@ -205,40 +211,264 @@ subject to patent applications.
                 </configuration>
             </plugin>
 
-            <!-- Source JAR -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>3.3.0</version>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <goals>
-                            <goal>jar-no-fork</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- Javadoc -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.6.2</version>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
 
     <profiles>
-        <!-- Profile for debug builds -->
+        <!-- Release profile for generating source and javadoc JARs -->
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <!-- Source JAR -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>3.3.0</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <!-- Javadoc -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>3.6.2</version>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        
+        <!-- ========== Platform Detection Profiles ========== -->
+        
+        <!-- Linux x64 (default) -->
+        <profile>
+            <id>linux-x64</id>
+            <activation>
+                <os>
+                    <family>unix</family>
+                    <name>Linux</name>
+                    <arch>amd64</arch>
+                </os>
+            </activation>
+            <properties>
+                <native.platform>linux</native.platform>
+                <native.arch>x64</native.arch>
+                <native.lib.extension>.so</native.lib.extension>
+                <native.lib.prefix>lib</native.lib.prefix>
+            </properties>
+        </profile>
+        
+        <!-- Linux x86 -->
+        <profile>
+            <id>linux-x86</id>
+            <activation>
+                <os>
+                    <family>unix</family>
+                    <name>Linux</name>
+                    <arch>i386</arch>
+                </os>
+            </activation>
+            <properties>
+                <native.platform>linux</native.platform>
+                <native.arch>x86</native.arch>
+                <native.lib.extension>.so</native.lib.extension>
+                <native.lib.prefix>lib</native.lib.prefix>
+            </properties>
+        </profile>
+        
+        <!-- Linux ARM64 -->
+        <profile>
+            <id>linux-arm64</id>
+            <activation>
+                <os>
+                    <family>unix</family>
+                    <name>Linux</name>
+                    <arch>aarch64</arch>
+                </os>
+            </activation>
+            <properties>
+                <native.platform>linux</native.platform>
+                <native.arch>arm64</native.arch>
+                <native.lib.extension>.so</native.lib.extension>
+                <native.lib.prefix>lib</native.lib.prefix>
+            </properties>
+        </profile>
+        
+        <!-- macOS x64 -->
+        <profile>
+            <id>macos-x64</id>
+            <activation>
+                <os>
+                    <family>mac</family>
+                    <arch>x86_64</arch>
+                </os>
+            </activation>
+            <properties>
+                <native.platform>macos</native.platform>
+                <native.arch>x64</native.arch>
+                <native.lib.extension>.dylib</native.lib.extension>
+                <native.lib.prefix>lib</native.lib.prefix>
+            </properties>
+        </profile>
+        
+        <!-- macOS ARM64 (Apple Silicon) -->
+        <profile>
+            <id>macos-arm64</id>
+            <activation>
+                <os>
+                    <family>mac</family>
+                    <arch>aarch64</arch>
+                </os>
+            </activation>
+            <properties>
+                <native.platform>macos</native.platform>
+                <native.arch>arm64</native.arch>
+                <native.lib.extension>.dylib</native.lib.extension>
+                <native.lib.prefix>lib</native.lib.prefix>
+            </properties>
+        </profile>
+        
+        <!-- Windows x64 -->
+        <profile>
+            <id>windows-x64</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                    <arch>amd64</arch>
+                </os>
+            </activation>
+            <properties>
+                <native.platform>windows</native.platform>
+                <native.arch>x64</native.arch>
+                <native.lib.extension>.dll</native.lib.extension>
+                <native.lib.prefix></native.lib.prefix>
+            </properties>
+            <build>
+                <plugins>
+                    <!-- Use cmake.exe on Windows -->
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>3.1.0</version>
+                        <executions>
+                            <execution>
+                                <id>cmake-configure</id>
+                                <phase>compile</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>cmake</executable>
+                                    <workingDirectory>${project.basedir}/src/main/cpp</workingDirectory>
+                                    <commandlineArgs>-B ${project.build.directory}/cmake-build -G "Visual Studio 17 2022" -A x64 -DCMAKE_BUILD_TYPE=${cmake.build.type} -DJAVA_HOME=${java.home} -DOUTPUT_DIR=${native.lib.output}</commandlineArgs>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        
+        <!-- Windows x86 -->
+        <profile>
+            <id>windows-x86</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                    <arch>x86</arch>
+                </os>
+            </activation>
+            <properties>
+                <native.platform>windows</native.platform>
+                <native.arch>x86</native.arch>
+                <native.lib.extension>.dll</native.lib.extension>
+                <native.lib.prefix></native.lib.prefix>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>3.1.0</version>
+                        <executions>
+                            <execution>
+                                <id>cmake-configure</id>
+                                <phase>compile</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>cmake</executable>
+                                    <workingDirectory>${project.basedir}/src/main/cpp</workingDirectory>
+                                    <commandlineArgs>-B ${project.build.directory}/cmake-build -G "Visual Studio 17 2022" -A Win32 -DCMAKE_BUILD_TYPE=${cmake.build.type} -DJAVA_HOME=${java.home} -DOUTPUT_DIR=${native.lib.output}</commandlineArgs>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        
+        <!-- Windows ARM64 -->
+        <profile>
+            <id>windows-arm64</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                    <arch>aarch64</arch>
+                </os>
+            </activation>
+            <properties>
+                <native.platform>windows</native.platform>
+                <native.arch>arm64</native.arch>
+                <native.lib.extension>.dll</native.lib.extension>
+                <native.lib.prefix></native.lib.prefix>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>3.1.0</version>
+                        <executions>
+                            <execution>
+                                <id>cmake-configure</id>
+                                <phase>compile</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>cmake</executable>
+                                    <workingDirectory>${project.basedir}/src/main/cpp</workingDirectory>
+                                    <commandlineArgs>-B ${project.build.directory}/cmake-build -G "Visual Studio 17 2022" -A ARM64 -DCMAKE_BUILD_TYPE=${cmake.build.type} -DJAVA_HOME=${java.home} -DOUTPUT_DIR=${native.lib.output}</commandlineArgs>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        
+        <!-- ========== Build Type Profiles ========== -->
+        
+        <!-- Debug build -->
         <profile>
             <id>debug</id>
             <properties>
@@ -246,7 +476,46 @@ subject to patent applications.
             </properties>
         </profile>
         
-        <!-- Profile for building Python module -->
+        <!-- ========== Multi-platform JAR Profile ========== -->
+        
+        <!-- Profile to build multi-platform JAR (requires pre-built natives for all platforms) -->
+        <profile>
+            <id>multi-platform</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <version>3.3.1</version>
+                        <executions>
+                            <execution>
+                                <id>copy-all-native-libs</id>
+                                <phase>process-classes</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${project.build.outputDirectory}/native</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>${project.basedir}/src/main/resources/native</directory>
+                                            <includes>
+                                                <include>**/*.so</include>
+                                                <include>**/*.dylib</include>
+                                                <include>**/*.dll</include>
+                                            </includes>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        
+        <!-- ========== Python Module Profile ========== -->
+        
         <profile>
             <id>python</id>
             <build>
@@ -264,13 +533,37 @@ subject to patent applications.
                                 </goals>
                                 <configuration>
                                     <executable>pip</executable>
-                                    <workingDirectory>${project.basedir}/src/main/python</workingDirectory>
+                                    <workingDirectory>${project.basedir}</workingDirectory>
                                     <arguments>
                                         <argument>install</argument>
                                         <argument>-e</argument>
                                         <argument>.</argument>
                                     </arguments>
                                 </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        
+        <!-- ========== Skip Native Build Profile ========== -->
+        
+        <profile>
+            <id>skip-native</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>cmake-configure</id>
+                                <phase>none</phase>
+                            </execution>
+                            <execution>
+                                <id>cmake-build</id>
+                                <phase>none</phase>
                             </execution>
                         </executions>
                     </plugin>

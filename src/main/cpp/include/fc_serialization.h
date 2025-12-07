@@ -163,9 +163,15 @@ struct ShmNode {
  */
 struct ShmKeyValue {
     ShmEntry entry;
+    std::atomic<int64_t> next_offset;  // Offset to next key-value in bucket chain (-1 if none)
+    std::atomic<int64_t> prev_offset;  // Offset to prev key-value in bucket chain (-1 if none)
     uint32_t key_size;
     uint32_t value_size;
     uint8_t data[0];  // key bytes followed by value bytes
+    
+    static constexpr int64_t NULL_OFFSET = -1;
+    
+    ShmKeyValue() : next_offset(NULL_OFFSET), prev_offset(NULL_OFFSET), key_size(0), value_size(0) {}
     
     static size_t total_size(size_t key_size, size_t value_size) {
         size_t base = sizeof(ShmKeyValue) + key_size + value_size;
@@ -183,11 +189,14 @@ struct ShmKeyValue {
  * @brief Bucket for hash-based collections (set, map)
  */
 struct ShmBucket {
-    IpcSharedMutex mutex;
+    IpcMutex mutex;                    // Use regular mutex for exclusive locking
     std::atomic<int64_t> head_offset;  // Offset to first entry in bucket
     std::atomic<uint32_t> count;       // Number of entries in bucket
+    std::atomic<uint32_t> size;        // Alias for count (for compatibility)
     
-    ShmBucket() : head_offset(ShmNode::NULL_OFFSET), count(0) {}
+    static constexpr int64_t NULL_OFFSET = -1;
+    
+    ShmBucket() : head_offset(NULL_OFFSET), count(0), size(0) {}
 };
 
 /**
@@ -202,7 +211,7 @@ struct CollectionHeader {
     std::atomic<uint64_t> capacity;
     IpcSharedMutex global_mutex; // Global mutex for structural changes
     
-    static constexpr uint32_t MAGIC = 0xFAC0LLEC;
+    static constexpr uint32_t MAGIC = 0xFAC01EC0;
     static constexpr uint32_t CURRENT_VERSION = 1;
     
     CollectionHeader() 
@@ -241,6 +250,11 @@ struct HashTableHeader : public CollectionHeader {
     
     HashTableHeader() 
         : bucket_count(DEFAULT_BUCKET_COUNT)
+        , load_factor_percent(DEFAULT_LOAD_FACTOR)
+        , total_bytes(0) {}
+    
+    explicit HashTableHeader(uint32_t buckets)
+        : bucket_count(buckets > 0 ? buckets : DEFAULT_BUCKET_COUNT)
         , load_factor_percent(DEFAULT_LOAD_FACTOR)
         , total_bytes(0) {}
 };

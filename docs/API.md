@@ -1,7 +1,9 @@
-# FastCollection API Reference
+# FastCollection v1.0.0 API Reference
 
 Copyright © 2025-2030, Ashutosh Sinha (ajsinha@gmail.com)  
 Patent Pending
+
+---
 
 ## Java API
 

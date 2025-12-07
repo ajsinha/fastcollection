@@ -1,4 +1,4 @@
-# FastCollection Architecture
+# FastCollection v1.0.0 Architecture
 
 **Technical Deep-Dive into the FastCollection System**
 

@@ -32,7 +32,7 @@ FastMap::FastMap(const std::string& mmap_file,
             );
         }
     } else {
-        header_ = file_manager_->find_or_construct<HashTableHeader>("map_header")(bucket_count);
+        header_ = file_manager_->find_or_construct<HashTableHeader>("map_header", bucket_count);
     }
     
     auto buckets_result = file_manager_->find<ShmBucket>("map_buckets");

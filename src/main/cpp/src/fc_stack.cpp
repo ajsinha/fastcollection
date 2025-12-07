@@ -31,7 +31,7 @@ FastStack::FastStack(const std::string& mmap_file,
             );
         }
     } else {
-        header_ = file_manager_->find_or_construct<DequeHeader>("stack_header")();
+        header_ = file_manager_->find_or_construct<DequeHeader>("stack_header");;
     }
     
     // Find or create ABA counter
@@ -39,7 +39,7 @@ FastStack::FastStack(const std::string& mmap_file,
     if (aba_result.first) {
         aba_tag_ = aba_result.first;
     } else {
-        aba_tag_ = file_manager_->find_or_construct<std::atomic<uint64_t>>("stack_aba_tag")(0);
+        aba_tag_ = file_manager_->find_or_construct<std::atomic<uint64_t>>("stack_aba_tag", 0);
     }
     
     stats_.size.store(header_->size.load(), std::memory_order_relaxed);

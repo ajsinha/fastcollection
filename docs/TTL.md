@@ -1,7 +1,9 @@
-# FastCollection TTL (Time-To-Live) Guide
+# FastCollection v1.0.0 TTL (Time-To-Live) Guide
 
 Copyright © 2025-2030, Ashutosh Sinha (ajsinha@gmail.com)  
 Patent Pending
+
+---
 
 ## Overview
 

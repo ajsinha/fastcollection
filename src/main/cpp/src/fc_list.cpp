@@ -39,7 +39,7 @@ FastList::FastList(const std::string& mmap_file,
         }
     } else {
         // Create new header
-        header_ = file_manager_->find_or_construct<ListHeader>("list_header")();
+        header_ = file_manager_->find_or_construct<ListHeader>("list_header");
     }
     
     stats_.size.store(header_->size.load(), std::memory_order_relaxed);

@@ -43,7 +43,7 @@ setup(
     author='Ashutosh Sinha',
     author_email='ajsinha@gmail.com',
     description='Ultra High-Performance Memory-Mapped Collections with TTL',
-    long_description=open('README.md').read() if os.path.exists('docs/README.md') else '',
+    long_description=open('docs/README.md').read() if os.path.exists('docs/README.md') else '',
     long_description_content_type='text/markdown',
     ext_modules=ext_modules,
     install_requires=['pybind11>=2.6'],
