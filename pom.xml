@@ -93,12 +93,13 @@ subject to patent applications.
                 </configuration>
             </plugin>
 
-            <!-- Create directories using Ant -->
+            <!-- Ant tasks for directory creation and native library copying -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <version>3.1.0</version>
                 <executions>
+                    <!-- Create directories before compilation -->
                     <execution>
                         <id>create-native-dirs</id>
                         <phase>generate-sources</phase>
@@ -112,6 +113,28 @@ subject to patent applications.
                                 <mkdir dir="${project.basedir}/src/main/cpp/include/generated"/>
                                 <mkdir dir="${native.resources.output}"/>
                                 <echo message="Building for platform: ${native.platform}-${native.arch}"/>
+                            </target>
+                        </configuration>
+                    </execution>
+                    <!-- Copy native libraries to JAR resources before packaging -->
+                    <execution>
+                        <id>copy-native-libs</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <mkdir dir="${project.build.outputDirectory}/native/${native.platform}/${native.arch}"/>
+                                <copy todir="${project.build.outputDirectory}/native/${native.platform}/${native.arch}" flatten="true" verbose="true">
+                                    <fileset dir="${project.build.directory}/native/${native.platform}/${native.arch}">
+                                        <include name="*${native.lib.extension}"/>
+                                        <include name="*.so"/>
+                                        <include name="*.dylib"/>
+                                        <include name="*.dll"/>
+                                    </fileset>
+                                </copy>
+                                <echo message="Native library copied to: ${project.build.outputDirectory}/native/${native.platform}/${native.arch}"/>
                             </target>
                         </configuration>
                     </execution>
@@ -148,33 +171,6 @@ subject to patent applications.
                         <configuration>
                             <executable>cmake</executable>
                             <commandlineArgs>--build ${project.build.directory}/cmake-build --config ${cmake.build.type} --parallel</commandlineArgs>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- Copy native libraries to resources with platform structure -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>3.3.1</version>
-                <executions>
-                    <execution>
-                        <id>copy-native-libs</id>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${native.resources.output}</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>${native.lib.output}</directory>
-                                    <includes>
-                                        <include>*${native.lib.extension}</include>
-                                    </includes>
-                                </resource>
-                            </resources>
                         </configuration>
                     </execution>
                 </executions>

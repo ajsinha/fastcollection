@@ -1,2 +1,0 @@
-/usr/bin/ar qc /home/ashutosh/IdeaProjects/fastcollection/target/native/linux/x64/libfastcollection_core.a CMakeFiles/fastcollection_core.dir/src/fc_common.cpp.o CMakeFiles/fastcollection_core.dir/src/fc_list.cpp.o CMakeFiles/fastcollection_core.dir/src/fc_set.cpp.o CMakeFiles/fastcollection_core.dir/src/fc_map.cpp.o CMakeFiles/fastcollection_core.dir/src/fc_queue.cpp.o CMakeFiles/fastcollection_core.dir/src/fc_stack.cpp.o
-/usr/bin/ranlib /home/ashutosh/IdeaProjects/fastcollection/target/native/linux/x64/libfastcollection_core.a

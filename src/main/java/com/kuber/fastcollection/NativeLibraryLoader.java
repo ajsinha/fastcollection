@@ -122,13 +122,24 @@ public final class NativeLibraryLoader {
         }
         
         /**
-         * Get the platform-specific library name.
+         * Get the platform-specific library base name (without prefix or suffix).
+         * Example: fastcollection-linux-x64
+         * 
+         * @return the platform-specific library base name
+         */
+        public String getLibraryBaseName() {
+            return LIBRARY_BASE_NAME + "-" + os.name + "-" + arch.name;
+        }
+        
+        /**
+         * Get the platform-specific library filename.
          * Format: {@code fastcollection-<os>-<arch>.<ext>}
+         * Note: No prefix on the platform-specific library (CMake sets PREFIX "")
          * 
          * @return the platform-specific library filename
          */
         public String getLibraryName() {
-            return LIBRARY_BASE_NAME + "-" + os.name + "-" + arch.name + os.suffix;
+            return getLibraryBaseName() + os.suffix;
         }
         
         /**
@@ -240,13 +251,15 @@ public final class NativeLibraryLoader {
             
             List<String> errors = new ArrayList<>();
             
-            // Strategy 1: Try java.library.path with platform-specific name
+            // Strategy 1: Try java.library.path with platform-specific name (no prefix)
+            // Library is built as: fastcollection-linux-x64.so
             if (tryLoadFromLibraryPath(PLATFORM.getLibraryName(), errors)) {
                 return;
             }
             
-            // Strategy 2: Try java.library.path with legacy name
-            if (tryLoadFromLibraryPath(LIBRARY_BASE_NAME, errors)) {
+            // Strategy 2: Try java.library.path with legacy name (with prefix)
+            // For backwards compatibility: libfastcollection.so
+            if (tryLoadFromLibraryPath(PLATFORM.getLegacyLibraryName(), errors)) {
                 return;
             }
             
@@ -267,14 +280,19 @@ public final class NativeLibraryLoader {
     
     /**
      * Try to load library from java.library.path.
+     * Searches for the library file directly by filename.
      */
-    private static boolean tryLoadFromLibraryPath(String libName, List<String> errors) {
+    private static boolean tryLoadFromLibraryPath(String libFileName, List<String> errors) {
         try {
             String libraryPath = System.getProperty("java.library.path", "");
+            List<String> searchedPaths = new ArrayList<>();
+            
             for (String path : libraryPath.split(File.pathSeparator)) {
                 if (path.isEmpty()) continue;
                 
-                File libFile = new File(path, PLATFORM.os.prefix + libName + PLATFORM.os.suffix);
+                File libFile = new File(path, libFileName);
+                searchedPaths.add(libFile.getAbsolutePath());
+                
                 if (libFile.exists() && libFile.isFile()) {
                     System.load(libFile.getAbsolutePath());
                     loaded = true;
@@ -282,7 +300,9 @@ public final class NativeLibraryLoader {
                     return true;
                 }
             }
-            errors.add("Library not found in java.library.path: " + libName);
+            
+            errors.add("Library not found in java.library.path: " + libFileName + 
+                       ". Searched: " + String.join(", ", searchedPaths));
         } catch (UnsatisfiedLinkError e) {
             errors.add("Failed to load from library path: " + e.getMessage());
         }
@@ -293,7 +313,9 @@ public final class NativeLibraryLoader {
      * Try to load library from JAR resources.
      */
     private static boolean tryLoadFromResources(List<String> errors) {
+        List<String> triedPaths = new ArrayList<>();
         for (String resourcePath : PLATFORM.getAlternativeResourcePaths()) {
+            triedPaths.add(resourcePath);
             try (InputStream in = NativeLibraryLoader.class.getResourceAsStream(resourcePath)) {
                 if (in == null) {
                     continue;
@@ -309,9 +331,10 @@ public final class NativeLibraryLoader {
             } catch (IOException e) {
                 errors.add("Failed to extract from " + resourcePath + ": " + e.getMessage());
             } catch (UnsatisfiedLinkError e) {
-                errors.add("Failed to load extracted library: " + e.getMessage());
+                errors.add("Failed to load extracted library from " + resourcePath + ": " + e.getMessage());
             }
         }
+        errors.add("Native library not found in JAR resources. Tried: " + String.join(", ", triedPaths));
         return false;
     }
     
