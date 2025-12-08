@@ -46,7 +46,24 @@ java -cp .:../../target/fastcollection-1.0.0.jar examples.DistributedLockExample
 
 ### Prerequisites
 - Python 3.8+
-- `pip install fastcollection`
+- pybind11 >= 2.6
+- C++ compiler and Boost headers
+
+### Installation
+
+```bash
+# Navigate to project root
+cd fastcollection
+
+# Install build dependencies
+pip install pybind11
+
+# Install FastCollection Python module
+pip install -e .
+
+# Verify installation
+python -c "from fastcollection import FastList; print('Success!')"
+```
 
 ### Running
 

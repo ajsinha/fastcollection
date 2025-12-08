@@ -104,8 +104,15 @@ int64_t ttl = list.getTTL(0);  // -1 if infinite
 
 ### Python
 
+```bash
+# Install from source (requires C++ compiler and Boost)
+cd fastcollection
+pip install pybind11  # Build dependency
+pip install -e .      # Development install
+```
+
 ```python
-from fastcollection import FastList
+from fastcollection import FastList, FastMap, TTL_INFINITE
 
 # Create a list
 lst = FastList("/tmp/mylist.fc")
@@ -121,6 +128,9 @@ data = lst.get(0)
 
 # Check TTL
 remaining = lst.get_ttl(0)  # -1 if infinite
+
+# Clean up
+lst.close()
 ```
 
 ## TTL (Time-To-Live) Feature

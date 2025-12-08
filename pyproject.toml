@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=45", "wheel", "pybind11>=2.6"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fastcollection"
+version = "1.0.0"
+description = "Ultra High-Performance Memory-Mapped Collections with TTL"
+readme = "README.md"
+license = {text = "Proprietary"}
+authors = [
+    {name = "Ashutosh Sinha", email = "ajsinha@gmail.com"}
+]
+requires-python = ">=3.8"
+keywords = ["collections", "memory-mapped", "ttl", "cache", "high-performance"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: Other/Proprietary License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: C++",
+    "Topic :: Software Development :: Libraries",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: MacOS :: MacOS X",
+    "Operating System :: Microsoft :: Windows",
+]
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest", "pybind11>=2.6"]
+
+[project.urls]
+Homepage = "https://github.com/abhikarta/fastcollection"
+Documentation = "https://github.com/abhikarta/fastcollection/docs"

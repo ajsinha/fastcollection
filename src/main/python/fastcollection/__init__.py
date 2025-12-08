@@ -34,7 +34,8 @@ Example:
 """
 
 try:
-    from .fastcollection import (
+    # Try to import from the native extension module
+    from fastcollection._native import (
         FastList,
         FastSet,
         FastMap,

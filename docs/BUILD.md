@@ -743,13 +743,40 @@ Cache closed.
 
 #### Prerequisites
 
+The Python module requires:
+- Python 3.8+
+- pybind11 >= 2.6
+- C++ compiler (same as for Java build)
+- Boost development headers
+
 ```bash
-# Build the Python module
+# Install Python build dependencies
+pip install pybind11 setuptools wheel
+
+# Navigate to project root
 cd /path/to/fastcollection
+
+# Option 1: Install in development mode (recommended for testing)
 pip install -e .
 
-# Or using Maven
+# Option 2: Build and install
+pip install .
+
+# Option 3: Build wheel for distribution
+pip wheel . -w dist/
+
+# Option 4: Using Maven (builds Python module alongside Java)
 mvn clean package -Ppython
+```
+
+#### Verify Python Installation
+
+```python
+# Test import
+python -c "from fastcollection import FastList, FastMap, TTL_INFINITE; print('Success!')"
+
+# Check version
+python -c "import fastcollection; print(fastcollection.__version__)"
 ```
 
 #### Run Python Examples
@@ -774,6 +801,38 @@ python task_queue_example.py
 
 # Event logging
 python event_log_example.py
+```
+
+#### Python Module Structure
+
+After installation, the module structure is:
+```
+fastcollection/
+├── __init__.py          # Python package init (imports from _native)
+└── _native.cpython-*.so # Compiled native extension
+```
+
+#### Python Troubleshooting
+
+**Import Error: "Native module not found"**
+```bash
+# Rebuild the module
+pip uninstall fastcollection
+pip install -e .
+```
+
+**Compilation Error: "pybind11 not found"**
+```bash
+pip install pybind11
+```
+
+**Compilation Error: "boost headers not found"**
+```bash
+# Linux
+sudo apt-get install libboost-all-dev
+
+# macOS
+brew install boost
 ```
 
 ### C++ Examples

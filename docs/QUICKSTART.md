@@ -38,8 +38,20 @@ implementation 'com.kuber:fastcollection:1.0.0'
 ### Python
 
 ```bash
-pip install fastcollection
+# Install from source (requires C++ compiler and Boost)
+cd fastcollection
+pip install pybind11  # Required build dependency
+pip install -e .      # Development install
+
+# Or build wheel
+pip install .
 ```
+
+**Requirements:**
+- Python 3.8+
+- pybind11 >= 2.6
+- C++ compiler with C++20 support
+- Boost development headers
 
 ### C++ (CMake)
 

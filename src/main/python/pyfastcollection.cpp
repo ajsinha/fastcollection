@@ -32,7 +32,7 @@ py::bytes vector_to_bytes(const std::vector<uint8_t>& v) {
     return py::bytes(reinterpret_cast<const char*>(v.data()), v.size());
 }
 
-PYBIND11_MODULE(fastcollection, m) {
+PYBIND11_MODULE(_native, m) {
     m.doc() = R"pbdoc(
         FastCollection - Ultra High-Performance Memory-Mapped Collections with TTL
         
